@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const mysql = require('mysql');
 const session = require('express-session');
-const { sessionConfig } = require('./redisConfig');
+// const { sessionConfig } = require('./redisConfig');
 
 const connection = mysql.createConnection({
     host : 'localhost',
@@ -13,11 +13,11 @@ const connection = mysql.createConnection({
 });
 
 
-// app.use(session({
-//     secret: 'secret',
-//     resave: true,
-//     saveUninitialized: true
-// }));
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+}));
 // app.use(session({
 //     store: new session.MemoryStore({
 //       checkPeriod: 360000000,
@@ -28,7 +28,7 @@ const connection = mysql.createConnection({
 //   }));
 
 
-app.use(session(sessionConfig));
+// app.use(session(sessionConfig));
 
 //definis enviroment secara global (.env)
 require('dotenv').config();
