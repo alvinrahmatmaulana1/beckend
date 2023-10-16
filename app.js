@@ -12,11 +12,19 @@ const connection = mysql.createConnection({
 });
 
 
+// app.use(session({
+//     secret: 'secret',
+//     resave: true,
+//     saveUninitialized: true
+// }));
 app.use(session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true
-}));
+    store: new session.MemoryStore({
+      checkPeriod: 360000000,
+    }),
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: false,
+  }));
 //definis enviroment secara global (.env)
 require('dotenv').config();
 
