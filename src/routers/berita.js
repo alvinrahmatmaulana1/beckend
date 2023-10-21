@@ -14,7 +14,7 @@ const upload = multer({storage: storage});
 
 
 router.get('/',berita.getDataBerita);
-// router.get('/:id',barang.getDatabarang);
+router.get('/:id',berita.getDetailBerita);
  router.post('/add',upload.single('gambar'),berita.addDataBerita);
  router.put('/edit/:id',upload.single('gambar'),berita.editDataBerita);
 router.delete('/delete/:id',berita.deleteDataBerita)
