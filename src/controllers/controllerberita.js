@@ -85,7 +85,7 @@ module.exports = {
             judul : req.body.judul,
             deskripsi : req.body.deskripsi,
             tanggal_terbit : req.body.tanggal_terbit,
-            gambar: req.files.filename
+            gambar: req.file.filename
         }
 
         pool.getConnection(function (err, connection) {
