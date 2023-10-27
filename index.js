@@ -40,6 +40,7 @@ app.use(bodyParser.json())
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*'); // Ini mengizinkan akses dari semua origin. Gantilah sesuai kebutuhan Anda.
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Methods', ' POST');
     // res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
   });
