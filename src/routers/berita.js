@@ -1,16 +1,23 @@
 const router = require('express').Router();
 const { berita } = require('../controllers');
-const multer = require('multer')
 
+const multer = require('multer')
+const fs = require('fs');
 const storage = multer.diskStorage({
-    destination: (req,file,cb) => {
-        cb(null,__dirname + '/../asset')
-    },
-    filename: (req ,file,cb)=>{
-        cb(null, Date.now() + "--" + file.originalname)
+  destination: (req, file, cb) => {
+    // Pastikan direktori ini ada dan dapat ditulis
+    const uploadDir = 'assets/';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir);
     }
-})
-const upload = multer({storage: storage});
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage });
 
 
 router.get('/',berita.getDataBerita);
