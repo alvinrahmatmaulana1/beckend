@@ -6,7 +6,7 @@ const fs = require('fs');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Pastikan direktori ini ada dan dapat ditulis
-    const uploadDir = 'assets/';
+    const uploadDir = 'assets/uploads/';
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir);
     }
