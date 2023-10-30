@@ -30,8 +30,8 @@ const upload = multer({ storage });
 
 router.get('/',berita.getDataBerita);
 router.get('/:id',berita.getDetailBerita);
-router.post('/add',berita.addDataBerita);
-router.put('/edit/:id',berita.editDataBerita);
+router.post('/add',upload.single('gambar'),berita.addDataBerita);
+router.put('/edit/:id',upload.single('gambar'),berita.editDataBerita);
 router.delete('/delete/:id',berita.deleteDataBerita)
 
 module.exports = router
