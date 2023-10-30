@@ -56,7 +56,7 @@ module.exports = {
                     judul : req.body.judul,
                     deskripsi : req.body.deskripsi,
                     tanggal_terbit : req.body.tanggal_terbit,
-                    gambar: req.file.path
+                    gambar: req.body.gambar
                 }
 
         
