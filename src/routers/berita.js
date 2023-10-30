@@ -18,10 +18,10 @@ const multer = require('multer')
 // });
 const storage = multer.diskStorage({
     destination: function (req, file, cb)  {
-     return cb(null, './public/uploads');
+     return cb(null, __dirname +'./public/uploads');
     },
     filename: function (req, file, cb)  {
-    return cb(null, `${Date.now()}_${file.originalname}`);
+    return cb(null, file.originalname);
     }
   });
 
@@ -30,8 +30,8 @@ const upload = multer({ storage });
 
 router.get('/',berita.getDataBerita);
 router.get('/:id',berita.getDetailBerita);
- router.post('/add',upload.single('gambar'),berita.addDataBerita);
- router.put('/edit/:id',upload.single('gambar'),berita.editDataBerita);
+router.post('/add',upload.single('gambar'),berita.addDataBerita);
+router.put('/edit/:id',upload.single('gambar'),berita.editDataBerita);
 router.delete('/delete/:id',berita.deleteDataBerita)
 
 module.exports = router
