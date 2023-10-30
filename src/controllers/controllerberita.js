@@ -51,6 +51,7 @@ module.exports = {
         //     tanggal_terbit,
         //     gambar
         // } = req.body
+        console.log(req.file)
         const data = {
                     judul : req.body.judul,
                     deskripsi : req.body.deskripsi,
