@@ -1,6 +1,14 @@
 const config = require('../configs/database');
 const mysql = require('mysql2');
 const pool = mysql.createPool(config);
+const admin = require('firebase-admin')
+const serviceAccount = require('./firebaseConfig.json')
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket: 'gs://storage-gambar-8aca4.appspot.com'
+})
+
 pool.on('error', (err) => {
     console.log(err)
 });
@@ -42,7 +50,7 @@ module.exports = {
         })
     },
 
-    addDataBerita(req, res) {
+    // addDataBerita(req, res) {
         // parse data
         // const {
         //     id,
@@ -51,31 +59,54 @@ module.exports = {
         //     tanggal_terbit,
         //     gambar
         // } = req.body
-        console.log(req.file)
-        const data = {
-                    judul : req.body.judul,
-                    deskripsi : req.body.deskripsi,
-                    tanggal_terbit : req.body.tanggal_terbit,
-                    gambar: req.file.path
-                }
+    //     
+    
 
-        
-
-        pool.getConnection(function (err, connection) {
-            if (err) console.log(err);
-
-            const query = 'INSERT INTO berita SET ?';
-            connection.query(query, [data], function (err, result) {
-                    if (err) console.log(err);
-
-                    res.send({
-                        success: true,
-                        message: 'Your record has been saved successfully',
-                    })
-                })
-
-            connection.release();
-        })
+    addDataBerita  (req, res) {
+        const { judul, deskripsi, tanggal_terbit } = req.body;
+        const file = req.file;
+      
+        if (!file) {
+          return res.status(400).send('Tidak ada berkas yang diunggah');
+        }
+      
+        const storageRef = bucket.file(file.originalname);
+        const fileStream = storageRef.createWriteStream({
+          metadata: {
+            contentType: file.mimetype, // Menggunakan tipe konten dari req.file.mimetype
+          },
+        });
+      
+        fileStream.on('error', (err) => {
+          console.error(err);
+          res.status(500).send('Terjadi kesalahan saat mengunggah gambar');
+        });
+      
+        fileStream.on('finish', () => {
+          const gambarUrl = `https://beckend.vercel.app/${bucket.name}/${file.originalname}`;
+          const sql = 'INSERT INTO berita (judul, deskripsi, tanggal_terbit, gambar) VALUES (?, ?, ?, ?)';
+      
+          pool.getConnection(function (err, connection) {
+            if (err) {
+              console.log(err);
+              res.status(500).send('Terjadi kesalahan saat menghubungkan ke database');
+              return;
+            }
+      
+            connection.query(sql, [judul, deskripsi, tanggal_terbit, gambarUrl], function (err, result) {
+              connection.release();
+      
+              if (err) {
+                console.error(err);
+                res.status(500).send('Terjadi kesalahan saat menyimpan data ke database');
+              } else {
+                res.status(200).send('Berhasil mengunggah gambar dan menyimpan data');
+              }
+            });
+          });
+        });
+      
+        file.stream.pipe(fileStream);
     },
 
     editDataBerita(req, res) {
