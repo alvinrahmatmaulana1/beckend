@@ -9,6 +9,8 @@ admin.initializeApp({
     storageBucket: 'gs://storage-gambar-8aca4.appspot.com'
 })
 
+const bucket = admin.storage().bucket();
+
 pool.on('error', (err) => {
     console.log(err)
 });
