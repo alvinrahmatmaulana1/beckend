@@ -45,6 +45,7 @@ app.use((req, res, next) => {
   });
 
 //memanggil route produk
+
 app.use(express.static('public'));
 const appRoute = require('./src/routers');
 app.use('/', appRoute);

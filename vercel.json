@@ -12,7 +12,8 @@
             "dest": "/",
             "methods": ["GET","PUT","POST","DELETE","PATCH","OPTIONS"],
             "headers": {
-                "Access-Control-Allow-Origin": "*"
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization"
             }
         }
     ]
