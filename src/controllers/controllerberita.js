@@ -96,90 +96,90 @@ module.exports = {
     //     connection.release();
     // })
 
-    addDataBerita: (req, res) => {
-        const { judul, deskripsi, tanggal_terbit } = req.body;
-        const file = req.file;
+    // addDataBerita: (req, res) => {
+    //     const { judul, deskripsi, tanggal_terbit } = req.body;
+    //     const file = req.file;
 
-        if (!file) {
-            return res.status(400).send('Tidak ada berkas yang diunggah');
-        }
+    //     if (!file) {
+    //         return res.status(400).send('Tidak ada berkas yang diunggah');
+    //     }
 
-        const bucket = admin.storage().bucket('gs://storage-gambar-8aca4.appspot.com');
-        const storageRef = bucket.file(file.originalname);
-        // storageRef.save(file.buffer);
-        const fileStream = storageRef.createWriteStream({
-            metadata: {
-                contentType: req.file.mimetype, // Menggunakan tipe konten dari req.file.mimetype
-            },
-        });
+    //     const bucket = admin.storage().bucket('gs://storage-gambar-8aca4.appspot.com');
+    //     const storageRef = bucket.file(file.originalname);
+    //     // storageRef.save(file.buffer);
+    //     const fileStream = storageRef.createWriteStream({
+    //         metadata: {
+    //             contentType: req.file.mimetype, // Menggunakan tipe konten dari req.file.mimetype
+    //         },
+    //     });
 
-        fileStream.on('error', (err) => {
-            console.error(err);
-            res.status(500).send('Terjadi kesalahan saat mengunggah gambar');
-        });
+    //     fileStream.on('error', (err) => {
+    //         console.error(err);
+    //         res.status(500).send('Terjadi kesalahan saat mengunggah gambar');
+    //     });
 
-        fileStream.on('finish', () => {
-            const gambar = `gs://storage-gambar-8aca4.appspot.com/${bucket.name}/${file.originalname}`;
-            // const [gambar] = storageRef.getSignedUrl({
-            //     action: 'read',
-            //     expires: '03-01-2500',
-            //   });
-            // const sql = 'INSERT INTO berita (judul, deskripsi, tanggal_terbit, gambar) VALUES (?, ?, ?, ?)';
+    //     fileStream.on('finish', () => {
+    //         const gambar = `gs://storage-gambar-8aca4.appspot.com/${bucket.name}/${file.originalname}`;
+    //         // const [gambar] = storageRef.getSignedUrl({
+    //         //     action: 'read',
+    //         //     expires: '03-01-2500',
+    //         //   });
+    //         // const sql = 'INSERT INTO berita (judul, deskripsi, tanggal_terbit, gambar) VALUES (?, ?, ?, ?)';
 
-            pool.getConnection(function (err, connection) {
-                if (err) {
-                    console.log(err);
-                    res.status(500).send('Terjadi kesalahan saat menghubungkan ke database');
-                    return;
-                }
-                const sql = 'INSERT INTO berita (judul, deskripsi, tanggal_terbit, gambar) VALUES (?, ?, ?, ?)';
-                connection.query(sql, [judul, deskripsi, tanggal_terbit, gambar,], function (err, result) {
-                    connection.release();
+    //         pool.getConnection(function (err, connection) {
+    //             if (err) {
+    //                 console.log(err);
+    //                 res.status(500).send('Terjadi kesalahan saat menghubungkan ke database');
+    //                 return;
+    //             }
+    //             const sql = 'INSERT INTO berita (judul, deskripsi, tanggal_terbit, gambar) VALUES (?, ?, ?, ?)';
+    //             connection.query(sql, [judul, deskripsi, tanggal_terbit, gambar,], function (err, result) {
+    //                 connection.release();
 
-                    if (err) {
-                        console.error(err);
-                        res.status(500).send('Terjadi kesalahan saat menyimpan data ke database');
-                    } else {
-                        res.status(200).send('Berhasil mengunggah gambar dan menyimpan data');
-                    }
-                });
-            });
-        });
-    },
+    //                 if (err) {
+    //                     console.error(err);
+    //                     res.status(500).send('Terjadi kesalahan saat menyimpan data ke database');
+    //                 } else {
+    //                     res.status(200).send('Berhasil mengunggah gambar dan menyimpan data');
+    //                 }
+    //             });
+    //         });
+    //     });
+    // },
 
 
 
-    editDataBerita(req, res) {
-        const id = req.params.id;
+    // editDataBerita(req, res) {
+    //     const id = req.params.id;
 
-        // parse data
-        const data = {
-            judul: req.body.judul,
-            deskripsi: req.body.deskripsi,
-            tanggal_terbit: req.body.tanggal_terbit,
-            gambar: req.file.path
-        }
+    //     // parse data
+    //     const data = {
+    //         judul: req.body.judul,
+    //         deskripsi: req.body.deskripsi,
+    //         tanggal_terbit: req.body.tanggal_terbit,
+    //         gambar: req.file.path
+    //     }
 
-        pool.getConnection(function (err, connection) {
-            if (err) throw err;
+    //     pool.getConnection(function (err, connection) {
+    //         if (err) throw err;
 
-            const query = 'UPDATE berita SET ? WHERE id = ?; '
-            connection.query(query, [data, id], function (err, result) {
-                if (err) throw err;
+    //         const query = 'UPDATE berita SET ? WHERE id = ?; '
+    //         connection.query(query, [data, id], function (err, result) {
+    //             if (err) throw err;
 
-                if (result['affectedRows'] === 0) res.send({
-                    message: 'There is no record with that id'
-                })
+    //             if (result['affectedRows'] === 0) res.send({
+    //                 message: 'There is no record with that id'
+    //             })
 
-                res.send({
-                    success: true,
-                    message: 'Updated successfully',
-                })
-            })
+    //             res.send({
+    //                 success: true,
+    //                 message: 'Updated successfully',
+    //             })
+    //         })
 
-            connection.release();
-        })
-    },
+    //         connection.release();
+    //     })
+    // },
     deleteDataBerita(req, res) {
         const id = req.params.id;
 
