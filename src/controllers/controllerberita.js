@@ -150,37 +150,37 @@ module.exports = {
 
     
 
-    editDataBerita(req, res) {
-        const id = req.params.id;
+    // editDataBerita(req, res) {
+    //     const id = req.params.id;
 
-        // parse data
-        const data = {
-            judul: req.body.judul,
-            deskripsi: req.body.deskripsi,
-            tanggal_terbit: req.body.tanggal_terbit,
-            gambar: req.file.path
-        }
+    //     // parse data
+    //     const data = {
+    //         judul: req.body.judul,
+    //         deskripsi: req.body.deskripsi,
+    //         tanggal_terbit: req.body.tanggal_terbit,
+    //         gambar: req.file.path
+    //     }
 
-        pool.getConnection(function (err, connection) {
-            if (err) throw err;
+    //     pool.getConnection(function (err, connection) {
+    //         if (err) throw err;
 
-            const query = 'UPDATE berita SET ? WHERE id = ?; '
-            connection.query(query, [data, id], function (err, result) {
-                if (err) throw err;
+    //         const query = 'UPDATE berita SET ? WHERE id = ?; '
+    //         connection.query(query, [data, id], function (err, result) {
+    //             if (err) throw err;
 
-                if (result['affectedRows'] === 0) res.send({
-                    message: 'There is no record with that id'
-                })
+    //             if (result['affectedRows'] === 0) res.send({
+    //                 message: 'There is no record with that id'
+    //             })
 
-                res.send({
-                    success: true,
-                    message: 'Updated successfully',
-                })
-            })
+    //             res.send({
+    //                 success: true,
+    //                 message: 'Updated successfully',
+    //             })
+    //         })
 
-            connection.release();
-        })
-    },
+    //         connection.release();
+    //     })
+    // },
     deleteDataBerita(req, res) {
         const id = req.params.id;
 
