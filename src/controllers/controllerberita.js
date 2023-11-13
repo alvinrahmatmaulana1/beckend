@@ -6,13 +6,13 @@ const pool = mysql.createPool(config);
 // const fs = require("fs");
 // const path = require("path");
 // const { Storage } = require('@google-cloud/storage')
-const admin = require('firebase-admin')
-const serviceAccount = require('../configs/storage-gambar-8aca4-firebase-adminsdk-j1azo-11c3db309c.json')
+// const admin = require('firebase-admin')
+// const serviceAccount = require('../configs/storage-gambar-8aca4-firebase-adminsdk-j1azo-11c3db309c.json')
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    storageBucket: 'gs://storage-gambar-8aca4.appspot.com'
-})
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount),
+//     storageBucket: 'gs://storage-gambar-8aca4.appspot.com'
+// })
 
 
 // storageBucket: "gs://storage-gambar-8aca4.appspot.com
