@@ -1,17 +1,17 @@
 const config = require('../configs/database');
 const mysql = require('mysql2');
 const pool = mysql.createPool(config);
-const admin = require('firebase-admin')
-const multer = require('multer')
-const serviceAccount = require('../configs/storage-gambar-8aca4-firebase-adminsdk-j1azo-11c3db309c.json')
+// const admin = require('firebase-admin')
+// const multer = require('multer')
+// const serviceAccount = require('../configs/storage-gambar-8aca4-firebase-adminsdk-j1azo-11c3db309c.json')
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    storageBucket: 'gs://storage-gambar-8aca4.appspot.com'
-})
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount),
+//     storageBucket: 'gs://storage-gambar-8aca4.appspot.com'
+// })
 
 
-const upload = multer({ dest: 'public/' });
+// const upload = multer({ dest: 'public/' });
 
 pool.on('error', (err) => {
     console.log(err)
