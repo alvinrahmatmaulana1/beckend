@@ -28,32 +28,42 @@ const multer = require('multer')
 const path = require('path');
 
 // Konfigurasi penyimpanan untuk berkas yang diunggah
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // Tentukan direktori penyimpanan berkas
-    cb(null, './public/uploads');
-  },
-  filename: function (req, file, cb) {
-    // Tentukan nama berkas yang diunggah
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  }
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     // Tentukan direktori penyimpanan berkas
+//     cb(null, './public/uploads');
+//   },
+//   filename: function (req, file, cb) {
+//     // Tentukan nama berkas yang diunggah
+//     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+//   }
+// });
 
 // Inisialisasi objek multer dengan konfigurasi penyimpanan
-const upload = multer({ storage: storage,
+// const upload = multer({ storage: storage,
 
-  fileFilter: function (req, file, cb) {
-    // Validasi tipe konten berkas
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb('Hanya gambar yang diizinkan.', false);
-    }
-  }});
+//   fileFilter: function (req, file, cb) {
+//     // Validasi tipe konten berkas
+//     if (file.mimetype.startsWith('image/')) {
+//       cb(null, true);
+//     } else {
+//       cb('Hanya gambar yang diizinkan.', false);
+//     }
+//   }});
 
 // const upload = multer({ storage , limits: { fileSize: 10 * 1024 * 1024 }, });
 
 
+const storage = multer.memoryStorage()
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: 'temp/',
+    filename: (req, file, callback) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      callback(null, file.fieldname + '-' + uniqueSuffix + '.' + file.originalname.split('.').pop());
+    },
+  }),
+});
 router.get('/',berita.getDataBerita);
 router.get('/:id',berita.getDetailBerita);
 router.post('/add',upload.single('gambar'),berita.addDataBerita);
