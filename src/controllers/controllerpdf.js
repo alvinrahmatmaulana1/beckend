@@ -16,40 +16,40 @@ const upload = multer({ dest: 'public/' });
 pool.on('error', (err) => {
     console.log(err)
 });
-const downloadPDF = async (req, res) => {
-    try {
-      const id = req.params.id;
+// const downloadPDF = async (req, res) => {
+//     try {
+//       const id = req.params.id;
   
-      const connection = await pool.pool.getConnection();
+//       const connection = await pool.pool.getConnection();
   
-      const [result] = await connection.execute(
-        'SELECT * FROM files WHERE id = ?',
-        [id]
-      );
+//       const [result] = await connection.execute(
+//         'SELECT * FROM files WHERE id = ?',
+//         [id]
+//       );
   
-      if (result.length === 0) {
-        connection.release();
-        return res.status(404).json({ success: false, error: 'File tidak ditemukan' });
-      }
+//       if (result.length === 0) {
+//         connection.release();
+//         return res.status(404).json({ success: false, error: 'File tidak ditemukan' });
+//       }
   
-      const { filename, storage_path } = result[0];
+//       const { filename, storage_path } = result[0];
   
-      const file = pool.getAdmin().storage().bucket().file(filename);
-      const fileStream = file.createReadStream();
-      res.setHeader('Content-disposition', `attachment; filename=${filename}`);
-      res.setHeader('Content-type', 'application/pdf');
-      fileStream.pipe(res);
+//       const file = pool.getAdmin().storage().bucket().file(filename);
+//       const fileStream = file.createReadStream();
+//       res.setHeader('Content-disposition', `attachment; filename=${filename}`);
+//       res.setHeader('Content-type', 'application/pdf');
+//       fileStream.pipe(res);
   
-      connection.release();
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, error: 'Kesalahan Server Internal' });
-    }
-  };
+//       connection.release();
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ success: false, error: 'Kesalahan Server Internal' });
+//     }
+//   };
 
 
 module.exports = {
-    downloadPDF,
+    // downloadPDF,
 // uploadPDF (req, res) {
 //     try {
 //       const { filename, path } = req.file;
