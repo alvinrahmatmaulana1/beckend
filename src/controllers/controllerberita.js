@@ -148,38 +148,84 @@ module.exports = {
     // },
 
 
+    addDataBerita  (req, res) {
+        const { judul, deskripsi, tanggal_terbit } = req.body;
+        const file = req.file;
 
-    // editDataBerita(req, res) {
-    //     const id = req.params.id;
+        if (!file) {
+          return res.status(400).send('Tidak ada berkas yang diunggah');
+        }
 
-    //     // parse data
-    //     const data = {
-    //         judul: req.body.judul,
-    //         deskripsi: req.body.deskripsi,
-    //         tanggal_terbit: req.body.tanggal_terbit,
-    //         gambar: req.file.path
-    //     }
+        const storageRef = bucket.file(file.originalname);
+        const fileStream = storageRef.createWriteStream({
+          metadata: {
+            contentType: file.mimetype, // Menggunakan tipe konten dari req.file.mimetype
+          },
+        });
 
-    //     pool.getConnection(function (err, connection) {
-    //         if (err) throw err;
+        fileStream.on('error', (err) => {
+          console.error(err);
+          res.status(500).send('Terjadi kesalahan saat mengunggah gambar');
+        });
 
-    //         const query = 'UPDATE berita SET ? WHERE id = ?; '
-    //         connection.query(query, [data, id], function (err, result) {
-    //             if (err) throw err;
+        fileStream.on('finish', () => {
+          const gambarUrl = `https://beckend.vercel.app/${bucket.name}/${file.originalname}`;
+          const sql = 'INSERT INTO berita (judul, deskripsi, tanggal_terbit, gambar) VALUES (?, ?, ?, ?)';
 
-    //             if (result['affectedRows'] === 0) res.send({
-    //                 message: 'There is no record with that id'
-    //             })
+          pool.getConnection(function (err, connection) {
+            if (err) {
+              console.log(err);
+              res.status(500).send('Terjadi kesalahan saat menghubungkan ke database');
+              return;
+            }
 
-    //             res.send({
-    //                 success: true,
-    //                 message: 'Updated successfully',
-    //             })
-    //         })
+            connection.query(sql, [judul, deskripsi, tanggal_terbit, gambarUrl], function (err, result) {
+              connection.release();
 
-    //         connection.release();
-    //     })
-    // },
+              if (err) {
+                console.error(err);
+                res.status(500).send('Terjadi kesalahan saat menyimpan data ke database');
+              } else {
+                res.status(200).send('Berhasil mengunggah gambar dan menyimpan data');
+              }
+            });
+          });
+        });
+
+        file.stream.pipe(fileStream);
+    },
+
+    editDataBerita(req, res) {
+        const id = req.params.id;
+
+        // parse data
+        const data = {
+            judul: req.body.judul,
+            deskripsi: req.body.deskripsi,
+            tanggal_terbit: req.body.tanggal_terbit,
+            gambar: req.file.path
+        }
+
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
+
+            const query = 'UPDATE berita SET ? WHERE id = ?; '
+            connection.query(query, [data, id], function (err, result) {
+                if (err) throw err;
+
+                if (result['affectedRows'] === 0) res.send({
+                    message: 'There is no record with that id'
+                })
+
+                res.send({
+                    success: true,
+                    message: 'Updated successfully',
+                })
+            })
+
+            connection.release();
+        })
+    },
     deleteDataBerita(req, res) {
         const id = req.params.id;
 
