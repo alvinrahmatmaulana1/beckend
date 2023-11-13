@@ -102,7 +102,7 @@ module.exports = {
 
         const bucket = admin.storage().bucket('gs://storage-gambar-8aca4.appspot.com');
         const storageRef = bucket.file(file.originalname);
-        storageRef.save(file.buffer);
+        // storageRef.save(file.buffer);
         const fileStream = storageRef.createWriteStream({
             metadata: {
                 contentType: req.file.mimetype, // Menggunakan tipe konten dari req.file.mimetype
@@ -115,11 +115,11 @@ module.exports = {
         });
 
         fileStream.on('finish', () => {
-            // const gambar = `gs://storage-gambar-8aca4.appspot.com/${bucket.name}/${file.originalname}`;
-            const [gambar] = storageRef.getSignedUrl({
-                action: 'read',
-                expires: '03-01-2500',
-              });
+            const gambar = `gs://storage-gambar-8aca4.appspot.com/${bucket.name}/${file.originalname}`;
+            // const [gambar] = storageRef.getSignedUrl({
+            //     action: 'read',
+            //     expires: '03-01-2500',
+            //   });
             // const sql = 'INSERT INTO berita (judul, deskripsi, tanggal_terbit, gambar) VALUES (?, ?, ?, ?)';
 
             pool.getConnection(function (err, connection) {
