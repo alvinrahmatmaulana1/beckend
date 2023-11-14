@@ -1,17 +1,17 @@
 const config = require('../configs/database');
 const mysql = require('mysql2');
 const pool = mysql.createPool(config);
-// const admin = require('firebase-admin')
-// const multer = require('multer')
-// const serviceAccount = require('../configs/storage-gambar-8aca4-firebase-adminsdk-j1azo-11c3db309c.json')
+const admin = require('firebase-admin')
+const multer = require('multer')
+const serviceAccount = require('../configs/storage-gambar-8aca4-firebase-adminsdk-j1azo-11c3db309c.json')
 
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount),
-//     storageBucket: 'gs://storage-gambar-8aca4.appspot.com'
-// })
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket: 'gs://storage-gambar-8aca4.appspot.com'
+})
 
 
-// const upload = multer({ dest: 'public/' });
+const upload = multer({ dest: 'public/' });
 
 pool.on('error', (err) => {
     console.log(err)
@@ -50,39 +50,39 @@ pool.on('error', (err) => {
 
 module.exports = {
     // downloadPDF,
-// uploadPDF (req, res) {
-//     try {
-//       const { filename, path } = req.file;
+uploadPDF (req, res) {
+    try {
+      const { filename, path } = req.file;
   
-//        pool.getConnection(function (err, connection){
+       pool.getConnection(function (err, connection){
   
-//       const bucket = admin.storage().bucket('gs://storage-gambar-8aca4.appspot.com');
-//        bucket.upload(path, { destination: filename });
+      const bucket = admin.storage().bucket('gs://storage-gambar-8aca4.appspot.com');
+       bucket.upload(path, { destination: filename });
   
-//     //   const [result] =  connection.execute(
-//     //     'INSERT INTO files (filename, filepath) VALUES (?, ?)',
-//     //     [filename, `gs://storage-gambar-8aca4.appspot.com/${filename}`]
-//     //   );
-//     const query = 'INSERT INTO files (filename, filepath) VALUES (?, ?)';
-//     connection.query(query,[filename,`gs://storage-gambar-8aca4.appspot.com/${filename}`] , function (err, result) {
-//         if (err) throw err;
+    //   const [result] =  connection.execute(
+    //     'INSERT INTO files (filename, filepath) VALUES (?, ?)',
+    //     [filename, `gs://storage-gambar-8aca4.appspot.com/${filename}`]
+    //   );
+    const query = 'INSERT INTO files (filename, filepath) VALUES (?, ?)';
+    connection.query(query,[filename,`gs://storage-gambar-8aca4.appspot.com/${filename}`] , function (err, result) {
+        if (err) throw err;
 
-//         res.send({
-//             success: true,
-//             message: 'upload data successfully',
-//             data: result
-//         })
-//     })
+        res.send({
+            success: true,
+            message: 'upload data successfully',
+            data: result
+        })
+    })
   
-//       connection.release();
+      connection.release();
   
-//     //   res.json({ success: true, id: result.insertId });
-//     });
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ success: false, error: 'Kesalahan Server Internal' });
-//     }
-//   },
+    //   res.json({ success: true, id: result.insertId });
+    });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, error: 'Kesalahan Server Internal' });
+    }
+  },
 
 
     
@@ -217,28 +217,28 @@ module.exports = {
     //         connection.release();
     //     })
     // },
-//     deleteDataBerita(req, res) {
-//         const id = req.params.id;
+    deleteDataPdf(req, res) {
+        const id = req.params.id;
 
-//         pool.getConnection(function (err, connection) {
-//             if (err) throw err;
+        pool.getConnection(function (err, connection) {
+            if (err) throw err;
 
-//             const query = 'DELETE FROM berita WHERE id = ?;'
-//             connection.query(query, [id], function (err, result) {
-//                 if (err) throw err;
+            const query = 'DELETE FROM files WHERE id = ?;'
+            connection.query(query, [id], function (err, result) {
+                if (err) throw err;
 
-//                 if (result['affectedRows'] === 0) res.send({
-//                     message: 'There is no record with that id'
-//                 })
+                if (result['affectedRows'] === 0) res.send({
+                    message: 'There is no record with that id'
+                })
 
-//                 res.send({
-//                     success: true,
-//                     message: 'Deleted successfully',
-//                 })
-//             })
-//             connection.release();
-//         })
-//     }
+                res.send({
+                    success: true,
+                    message: 'Deleted successfully',
+                })
+            })
+            connection.release();
+        })
+    }
 
 
 }
