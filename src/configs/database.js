@@ -7,9 +7,9 @@
 // };
 module.exports = {
     multipleStatements: true,
-    host: 'containers-us-west-152.railway.app',
+    host: 'viaduct.proxy.rlwy.net',
     user: 'root',
-    password: '5TyoUaAXNzohSgLEsSjS',
+    password: '6cf4baEbEafHHFDD4ac35abcbA26f51H',
     database: 'railway',
-    port: 7723,
+    port: 14547,
 }

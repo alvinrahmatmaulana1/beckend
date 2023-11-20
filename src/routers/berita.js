@@ -66,7 +66,7 @@ const upload = multer({
 });
 router.get('/',berita.getDataBerita);
 router.get('/:id',berita.getDetailBerita);
-// router.post('/add',upload.single('gambar'),berita.addDataBerita);
+router.post('/add',upload.single('gambar'),berita.Addberita);
 router.put('/edit/:id',upload.single('gambar'),berita.editDataBerita);
 router.delete('/delete/:id',berita.deleteDataBerita)
 

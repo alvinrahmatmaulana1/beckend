@@ -1,18 +1,16 @@
 const config = require('../configs/database');
 const mysql = require('mysql2');
 const pool = mysql.createPool(config);
-// const admin = require('firebase-admin')
-// const serviceAccount = require('../configs/storage-gambar-8aca4-firebase-adminsdk-j1azo-11c3db309c.json')
 // const fs = require("fs");
 // const path = require("path");
 // const { Storage } = require('@google-cloud/storage')
-// const admin = require('firebase-admin')
-// const serviceAccount = require('../configs/storage-gambar-8aca4-firebase-adminsdk-j1azo-11c3db309c.json')
+const admin = require('firebase-admin')
+const serviceAccount = require('../configs/storage-gambar-8aca4-firebase-adminsdk-j1azo-11c3db309c.json')
 
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount),
-//     storageBucket: 'gs://storage-gambar-8aca4.appspot.com'
-// })
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+   
+})
 
 
 // storageBucket: "gs://storage-gambar-8aca4.appspot.com
@@ -22,10 +20,56 @@ const pool = mysql.createPool(config);
 pool.on('error', (err) => {
     console.log(err)
 });
+const Addberita = async (req, res) => {
+    try {
+      const { judul, deskripsi, tanggal_terbit } = req.body;
+      const gambarFile = req.file;
+  
+      // Upload image to Cloud Storage
+      const bucket = admin.storage().bucket('storage-gambar-8aca4.appspot.com');
+      const path = `${gambarFile.originalname}`;
+      const file = bucket.file(path);
+  
+      await file.createWriteStream({
+        metadata: {
+          contentType: gambarFile.mimetype,
+        },
+      }).end(gambarFile.buffer);
+  
+      // Insert data into MySQL database
+      pool.getConnection((err, connection) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ success: false, error: 'Kesalahan Server Internal' });
+        }
+  
+        const query = 'INSERT INTO berita (judul, deskripsi, tanggal_terbit, gambar) VALUES (?, ?, ?, ?)';
+        const values = [judul, deskripsi, tanggal_terbit, path];
+  
+        connection.query(query, values, (err, result) => {
+          connection.release();
+  
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, error: 'Kesalahan Server Internal' });
+          }
+  
+          res.send({
+            success: true,
+            message: 'Data uploaded successfully',
+            data: result,
+          });
+        });
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, error: 'Kesalahan Server Internal' });
+    }
+  }
 
 
 module.exports = {
-    // addDataBerita,
+    Addberita,
     getDataBerita(req, res) {
         pool.getConnection(function (err, connection) {
             if (err) throw err;
@@ -146,6 +190,49 @@ module.exports = {
     //         });
     //     });
     // },
+    // Addberita (req, res) {
+    //     try {
+    //         const { judul, deskripsi, tanggal_terbit } = req.body;
+    //         const gambarFile = req.file;
+        
+    //         // Upload image to Cloud Storage
+    //         const bucket = admin.storage().bucket('gs://storage-gambar-8aca4.appspot.com');
+    //         const path = `gs://storage-gambar-8aca4.appspot.com/${gambarFile.originalname}`;
+    //         const file = bucket.file(path);
+        
+    //         file.createWriteStream({ metadata: { contentType: 'image/jpg' } }).end(gambarFile.buffer);
+        
+    //         // Insert data into MySQL database
+    //         pool.getConnection(function (err, connection) {
+    //           if (err) {
+    //             console.error(err);
+    //             return res.status(500).json({ success: false, error: 'Kesalahan Server Internal' });
+    //           }
+        
+    //           const query = 'INSERT INTO berita (judul, deskripsi, tanggal_terbit, gambar) VALUES (?, ?, ?, ?)';
+    //           const values = [judul, deskripsi, tanggal_terbit, path];
+        
+    //           connection.query(query, values, function (err, result) {
+    //             connection.release();
+        
+    //             if (err) {
+    //               console.error(err);
+    //               return res.status(500).json({ success: false, error: 'Kesalahan Server Internal' });
+    //             }
+        
+    //             res.send({
+    //               success: true,
+    //               message: 'Data uploaded successfully',
+    //               data: result,
+    //             });
+    //           });
+    //         });
+    //       } catch (error) {
+    //         console.error(error);
+    //         res.status(500).json({ success: false, error: 'Kesalahan Server Internal' });
+    //       }
+//   },
+
 
 
     
